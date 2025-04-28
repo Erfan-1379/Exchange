@@ -1,9 +1,16 @@
-from djongo import models
+# prices/models.py
+from datetime import datetime
+from mongoengine import Document, StringField, DecimalField, DateTimeField
 
-class Currency(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    price = models.DecimalField(max_digits=15, decimal_places=2)
-    last_updated = models.DateTimeField(auto_now=True)
+class CurrencyHistory(Document):
+    name = StringField(required=True)
+    price = DecimalField(required=True, precision=2)
+    timestamp = DateTimeField(required=True)
+    last_updated = DateTimeField(default=datetime.utcnow)
 
-    def __str__(self):
-        return f"{self.name}: {self.price}"
+    meta = {
+        'indexes': [
+            {'fields': ['name', 'timestamp'], 'unique': True}
+        ]
+    }
+

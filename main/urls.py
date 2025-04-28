@@ -1,6 +1,7 @@
+from .views import FetchPricesAPIView, PriceHistoryAPIView
 from django.urls import path
-from .views import CurrencyListView
 
 urlpatterns = [
-    path('currencies/', CurrencyListView.as_view(), name='currency-list'),
+    path("fetch/", FetchPricesAPIView.as_view()),
+    path("history/<str:currency_name>/", PriceHistoryAPIView.as_view()),
 ]

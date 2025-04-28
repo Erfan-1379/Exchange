@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+from mongoengine import connect
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'config',
     'main',
+    'users'
 ]
 
 INSTALLED_APPS += ['django_celery_beat']
@@ -88,10 +92,24 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('ENGINE_DB'),
-        'NAME': config('NAME_DB'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('NAME_DB_PG'),
+        'USER': config('USER_DB_PG'),
+        'PASSWORD': config('PASSWORD_DB_PG'),
+        'HOST': config('HOST_DB_PG', default='localhost'),
+        'PORT': config('PORT_DB_PG', default='5432'),
     }
 }
+
+
+
+connect(
+    db=config('NAME_DB_MO'),
+    username=config('USER_DB_MO', default=None),
+    password=config('PASSWORD_DB_MO', default=None),
+    host=config('HOST_DB_MO', default='localhost'),
+    port=int(config('PORT_DB_MO', default=27017))
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -117,7 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -142,5 +160,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+# CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 
+AUTH_USER_MODEL = 'users.CustomUser'
